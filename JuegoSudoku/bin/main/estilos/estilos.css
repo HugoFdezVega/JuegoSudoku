@@ -1,0 +1,16 @@
+#hbCabecera {
+	-fx-background-image: url("/imagenes/fondo6.png");
+	-fx-background-size: 698 64;
+    -fx-background-position: center center;
+	
+}
+
+#btAnadir, #btAceptar, #btListar, #btAnadirHoras, #btAnadirPrecioMaterial, #btGenerar {
+	-fx-font: 14 "arial";
+	-fx-base: #b6e7c9;
+}
+
+#btCancelar, #btBorrar, #btCerrar {
+	-fx-font: 15 "arial";
+	-fx-base: #dc143c;
+}
