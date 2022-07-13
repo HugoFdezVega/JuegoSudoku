@@ -26,7 +26,7 @@ public class Main extends Application {
 			escenarioPrincipal.setScene(escena);
 			escenarioPrincipal.setOnCloseRequest(e -> confirmarSalida(escenarioPrincipal, e));
 			escenarioPrincipal.show();
-			this.cVentanaPrincipal=cVentanaPrincipal;
+			Main.cVentanaPrincipal=cVentanaPrincipal;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

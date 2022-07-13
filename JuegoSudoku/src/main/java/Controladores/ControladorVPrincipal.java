@@ -22,12 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class ControladorVPrincipal {
@@ -149,9 +145,9 @@ public class ControladorVPrincipal {
     /*
      * Evento comprobarAcierto, que recibirá un evento cuando se suelte una tecla. Obtenemos la fuente de dicho evento y la comparamos con matriz, 
      * para obtener el índice en que se ha realizado dicho cambio. Después aplicamos una fórmula para obtener la posición de la fila y la casilla de sodoku
-     * correspondiente a dicho índice. Si el texto introducido en dicho índice es igual al de sudoku, el número introducido en el TextField es correcto. Si la 
-     * dificultad no es difícil, la casilla se pondrá verde y se bloqueará. Si no coincide el número introducido será erróneo, por lo que si la dificultad
-     * no es difícil, la casilla se pondrá en rojo.
+     * correspondiente a dicho índice. Si el texto introducido en dicho índice es igual al de sudoku, el número introducido en el TextField es correcto,
+     * por lo que añadimos dicho índice al set aciertos. Si la dificultad no es difícil, la casilla se pondrá verde y se bloqueará. Si no coincide 
+     * el número introducido será erróneo, por lo que si la dificultad no es difícil, la casilla se pondrá en rojo.
      */
     private void comprobarAcierto(KeyEvent e) {
     	int indice=-1;
@@ -182,7 +178,8 @@ public class ControladorVPrincipal {
     }
     
     /*
-     * Método formatearTabla() 
+     * Método formatearTabla(), que da el formato adecuado tras leer los datos, haciendo no-editables las casillas que estaban bien colocadas y poniendo en
+     * rojo las que estaban mal colocadas, aunque no aquellas que están vacías.
      */
     public void formatearTabla() {
     	int n1=0;
@@ -211,6 +208,10 @@ public class ControladorVPrincipal {
     	}
     }
     
+    /*
+     * Método comprobarReglas(), que sustituirá cualquier valor introducido en los TextField que no sea un número. También sustituirá cualquier valor
+     * anterior por el nuevo si éste sí es un número.
+     */
     private void comprobarReglas(String oldValue, String newValue) {
 	    if (! matriz[indiceEscuchado].getText().matches("\\d*")) {
 	    	matriz[indiceEscuchado].setText(matriz[indiceEscuchado].getText().replaceAll("[^\\d]", ""));
@@ -220,6 +221,10 @@ public class ControladorVPrincipal {
 	    }
     }
     
+    /*
+     * Método comprobarGanador(), que comprobará si el tamaño del set aciertos, donde hemos ido añadiendo todos los índices de matriz con números correctos,
+     * es de 81. De ser así, popeamos un diálogo felicitando al jugador y para evitar problemas, deshabilitamos los botones de pista y de resolver.
+     */
     private void comprobarGanador() {
     	if (aciertos.size()==81) {
     		Dialogos.mostrarDialogoInformacion("¡Conseguido!", "Felicidades, has resuelto correctamente el sudoku.");
@@ -228,6 +233,9 @@ public class ControladorVPrincipal {
     	}
     }
     
+    /*
+     * Método infoContextual(), que crea y coloca la info contextual de los diversos elementos de la aplicación.
+     */
     private void infoContextual() {
     	Tooltip difFacil = new Tooltip ("- Fácil: Empieza con 35 casillas rellenas y 5 pistas disponibles. \nLos fallos se indican en rojo y los aciertos en verde. \n - Intermedio: Empieza con 30 casillas rellenas y 3 pistas disponibles. \nLos fallos se indican en rojo y los aciertos en verde. \n - Difícil: Empieza con 25 casillas rellenas y 0 pistas disponibles. \nNi los fallos ni los aciertos se indican.");
     	Tooltip tpBtPista = new Tooltip ("Rellena una casilla vacía aleatoria");
@@ -238,6 +246,11 @@ public class ControladorVPrincipal {
     	btResolver.setTooltip(tpBtResolver);
     }
     
+    /*
+     * Acción acResolver, que entrará en un bucle con el tamaño de matriz e irá haciendo set en dicho índice al valor correspondiente de sudoku,
+     * iterando con n2 e incrementando n1 cuando el primero llegue a 8, lo que significa que ha terminado dicha fila. Cada valor vuelve no-editable
+     * la casilla y la pone en negro.
+     */
     @FXML
     void acResolver(ActionEvent event) {
     	int n1=0;
@@ -259,6 +272,10 @@ public class ControladorVPrincipal {
     	Dialogos.mostrarDialogoInformacion("¿Conseguido?", "Felicidades, has resuelto correctamente el sudoku. \n(Con algo de ayuda...)");
     }
     
+    /*
+     * Acción acPista, que rellenará una casilla aleatoria con el método rellenarCasilla(), luego comprobará el ganador, decrementará el total de pistas
+     * y cambiará el texto del correspondiente TextField. De llegar las pistas a 0, deshabilitará el botón asociado a la acción.
+     */
     @FXML
     void acPista(ActionEvent event) {
     	rellenarCasilla(1);
@@ -270,6 +287,10 @@ public class ControladorVPrincipal {
     	}
     }
     
+    /*
+     * Método escribir(), que guardará toda la info relevante de la partida para su posterior recuperación. Ello incluye los valores de matriz, la plantilla
+     * del sudoku, el set de aciertos, la dificultad y las pistas. 
+     */
 	public void escribir() {
 		File archivoMatriz=new File("datos/matriz.dat");
 		try {
@@ -336,9 +357,13 @@ public class ControladorVPrincipal {
 		} catch (IOException e) {
 			System.out.println("ERROR inesperado de Entrada/Salida en aciertos");
 		}
-		
 	}
 	
+	/*
+	 * Método leer(), que recuperará la información guardada en los documentos por el método escribir(). Asignará los datos de la matriz que fueron guardados,
+	 * creará una nueva plantilla sudoku con las filas guardadas, asignará todos los índices acertados al set correspondiente y también recuperará y formateará
+	 * la dificultad y las pistas restantes.
+	 */
 	public void leer() {
 		File archivoMatriz=new File("datos/matriz.dat");
 		try {
@@ -348,7 +373,6 @@ public class ControladorVPrincipal {
 					t.setText((String) dataIS.readObject());
 				}
 				dataIS.close();
-			
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: No se pudo abrir el fichero de matriz");
 		} catch (IOException e) {
@@ -371,7 +395,6 @@ public class ControladorVPrincipal {
 					}
 				} while (fila!=null);
 				dataIS.close();
-			
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: No se pudo abrir el fichero de sudoku");
 		} catch (IOException e) {
@@ -392,7 +415,6 @@ public class ControladorVPrincipal {
 					}
 				} while (num!=null);
 				dataIS.close();
-			
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: No se pudo abrir el fichero de aciertos");
 		} catch (IOException e) {
@@ -439,7 +461,6 @@ public class ControladorVPrincipal {
 				if (pistas==0) {
 					btPista.setDisable(true);
 				}
-
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: No se pudo abrir el fichero de pistas");
 		} catch (IOException e) {
@@ -447,7 +468,6 @@ public class ControladorVPrincipal {
 		} catch (ClassNotFoundException e) {
 			System.out.println("ERROR: No se pudo encontrar la clase a leer");
 		}
-		
 	}
 
 
