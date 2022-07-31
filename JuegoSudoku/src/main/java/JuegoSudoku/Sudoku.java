@@ -85,8 +85,6 @@ public class Sudoku {
 		
 		List[] sudoku=new List[] {fila0,fila1,fila2,fila3,fila4,fila5,fila6,fila7,fila8};
 		
-		String patata=fila1.get(5);
-		
 		return sudoku;
 	}
 	
