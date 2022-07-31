@@ -214,8 +214,8 @@ public class ControladorVPrincipal {
      * anterior por el nuevo si éste sí es un número.
      */
     private void comprobarReglas(String oldValue, String newValue) {
-	    if (! matriz[indiceEscuchado].getText().matches("\\d*")) {
-	    	matriz[indiceEscuchado].setText(matriz[indiceEscuchado].getText().replaceAll("[^\\d]", ""));
+	    if (! matriz[indiceEscuchado].getText().matches("[1-9]*")) {
+	    	matriz[indiceEscuchado].setText(matriz[indiceEscuchado].getText().replaceAll("[^1-9]", ""));
 	    }
 	    if (! matriz[indiceEscuchado].getText().matches("\\d{1}")) {
 	    	matriz[indiceEscuchado].setText(matriz[indiceEscuchado].getText().replaceFirst("[\\d]", ""));
